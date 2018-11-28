@@ -1,0 +1,159 @@
+/* JOGO DA FORCA - PROJETO FINAL PARA A CONCLUSÃO DA DISCIPLINA DE ALGORITMOS.
+O JOGO NÃO ATENDE A TODOS OS REQUISITOS SOLICITADOS PELO PROFESSOR,
+ MAS FOI O QUE CONSEGUIMOS.
+IF BAIANO .
+DISCENTES: WANDERSON PACHECO E ANDERSON SOUSA.
+DOCENTE: DIEGO PEREIRA
+SR DO BONFIM - BA
+23/09/2017 */
+
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<ctype.h>
+#include <time.h>
+
+// função para ler as palavras de um arquivo .txt e retornar uma escolha aleatoria
+char *ePalavra(char[], char[]); //escolhe palavra
+
+int main(){	
+	// strings são usadas para representar textos.
+	// strlen Determina o tamanho de uma string.
+	
+	char palavra[50], tentativa[50], erros, cPalavra[50], escolha[50],chute, c;  //variaveis char, para caracteres;
+	int i, fim=0, encontrada, qtdTentativas=0, l_tent, acertos=0; //variaveis inteiras; quantidade de tentativas, limite de tentativas e acertos
+	
+	//comando para buscar a palavra no arquivo .txt
+	strcpy(palavra, ePalavra("palavras.txt", escolha));
+	strcpy(cPalavra, palavra); //copia a string de origem, para a string destino
+	
+	//define o limite de tentativa
+	l_tent = 5; //limite de tentativa será 5
+	
+	//loop que armazena a string com espaços no tamanho da palavra sorteada
+	for(i=0; i<strlen(palavra);i++) 
+		tentativa[i] = ' ';
+		
+	do {
+		// apresenta o cabeçalho do jogo
+		system("cls");
+		
+		printf("\n################################################");
+		printf("\n################################################");
+		printf("\n######## BEM-VINDO AO JOGO DOS ANIMAIS #########");
+		printf("\n################################################");
+		printf("\n################################################\n\n");
+		
+		
+		
+		// switch case para a apresentação do boneco, decrementando !
+		switch (l_tent - qtdTentativas){
+			
+                  case 5: printf("___________   \n|         |   \n|        _|_\n|          \n|        \ \n|         \n| \n| \n| \n\n"); 
+                          break;
+                      
+                  case 4: printf("___________   \n|         |   \n|        _|_\n|         O    \n|         \n|       \n| \n| \n| \n\n");
+                          break;
+                      
+                  case 3: printf("___________   \n|         |   \n|        _|_\n|         O    \n|         |    \n|         \n| \n| \n| \n\n");
+                          break;
+                      
+                  case 2: printf("___________   \n|         |   \n|        _|_\n|         O    \n|        /|    \n|         \n| \n| \n| \n\n");
+                          break;
+                      
+                  case 1: printf("___________   \n|         |   \n|        _|_\n|         O    \n|        /|\\    \n|         \n| \n| \n| \n\n");
+                          break;
+                      
+                  case 0: printf("___________   \n|         |   \n|        _|_\n|         O    \n|        /|\\    \n|        /  \n| \n| \n| \n\n");
+                          break;
+                }
+		
+		// apresenta as letras ja encontradas 
+		for(i=0;i<strlen(palavra);i++)
+			printf(" %c  ", tentativa[i]);
+		printf("\n");
+		
+		// loop que apresentar as posições para as letras, variando de acordo com o tamanho da palavra
+		for(i=0;i<strlen(palavra);i++)
+			printf("___ ");
+			printf("\n");		
+		
+		printf("Resta:  %d", l_tent - qtdTentativas); //subtrai o limite de tentativas - quantidade de tentativas
+		printf(" - corretas: %d", acertos);  // mostra na tela os acertos
+		
+		// '     respostas do jogador  '  ..
+		// ler respostas do jogador 
+		printf("\n\nEntre com uma letra (ou * para encerrar) + <ENTER>: ");
+		scanf("%c", &chute);
+		scanf("%c", &c);  // comando para manter o controle do caracter ENTER
+		
+		//  testa se a letra informada esta na palavra escolhida.
+		encontrada = 0; // quando valer 1, é pq a palavra foi encontrada.
+		for (i=0; i<strlen(palavra);i++)
+			if(toupper (cPalavra[i]) == toupper (chute)){
+				cPalavra[i] = '*' ; //quando a copia da palavra for = a *, o jogo encerra .
+				tentativa[i] = toupper(chute); // toupper, caso o jogador tenha digitado caracteres minusculos, esse comando imprime o caractere maiusculo.
+				acertos++; 
+				encontrada = 1 ;
+	
+			}
+		
+		if(encontrada == 0)
+			qtdTentativas++; // se o jogador errar, a variavel incrementa o numero de tentativas
+			
+		if(qtdTentativas >= l_tent || acertos == strlen(palavra) || chute == '*') 
+			fim=1;
+		// se o numero de tentativas for maior que a variavel l_tent (Limite de tentativas)..																					
+		// o jogo encerra ou se descobrir todas as letras da palavra, o jogo tbm encerra.																							
+			//	 ou se o jogador desejar encerrar o jogo . 
+			
+	} while (fim == 0);  // fim passará a ser 1 quando a palavra for descoberta
+		
+	system("cls"); // limpa a tela .
+	// Mensagem para a conclusão o jogo
+	if (qtdTentativas >= l_tent){  // apresentação da tela após conclusão do jogo
+		printf("\n ###### LOOSER, O DIEGO TE ENFORCOU - HAHAHA . ######\n\n");
+		printf("A palavra era: %s", palavra);
+	} else if (chute != '*' ){
+		printf("\n ###### WINNER. VOCE VENCEU !! ######\n\n");
+		printf("%s\n",strupr(palavra)); // strupr, imprime a string em maiusculas. 
+	}
+	return 0;
+}
+// especie de banco de dados em txt, para o sorteio das palavras.
+//o * é o ponteiro, que serve para localizar o arquivo 
+	char *ePalavra(char nomeArquivo[], char escolha[]) {
+	char linha[100][50];
+	int contador=0, i;
+	FILE *arq;
+	
+	//abre o arquivo.
+	if((arq = fopen("palavras.txt", "r")) == NULL)
+	puts("Erro na Abertura do Arquivo! \n\n");
+	else {
+		do {
+			// le a linha do arquivo.
+			fgets(escolha, 50, arq);
+			
+			// tira a quebra da linha 
+			for (i=0;i<strlen(escolha); i++)
+				if (escolha [i] == '\n')
+					escolha[i] = '\0';
+				
+				// testa se a string não esta vazia e armazena no vetor
+			if ( strcmp(escolha, "")) {
+				strcpy(linha[contador], escolha);
+				contador++;
+			}
+									
+		} while (!feof(arq));
+	}
+	
+	// sorteio da palavra pelo indice.
+	srand(time(NULL)); // inicia o random
+	i = rand() % contador + 1; // gera numeros aleatorios entre o contador
+	
+	strcpy(escolha, linha[i]);
+	return escolha;
+}
